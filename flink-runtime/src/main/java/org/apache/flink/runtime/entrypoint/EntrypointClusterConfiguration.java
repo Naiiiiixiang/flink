@@ -23,7 +23,14 @@ import javax.annotation.Nullable;
 
 import java.util.Properties;
 
+
 /** Basic {@link ClusterConfiguration} for entry points. */
+// 进入点的集群配置
+// 1. configDir: flink-conf.yaml 文件所在的目录
+// 2. dynamicProperties: 动态配置
+// 3. args: 命令行参数
+// 4. hostname: hostname
+// 5. restPort: rest api 端口
 public class EntrypointClusterConfiguration extends ClusterConfiguration {
 
     @Nullable private final String hostname;

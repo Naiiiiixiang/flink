@@ -29,8 +29,14 @@ import java.util.Properties;
 
 import static java.util.Objects.requireNonNull;
 
+
 /** Configuration for the {@link StandaloneApplicationClusterEntryPoint}. */
-final class StandaloneApplicationClusterConfiguration extends EntrypointClusterConfiguration {
+// 本地应用集群入口点配置
+// 1. savepoint 恢复配置
+// 2. job id
+// 3. job 类名
+// 4. jar 包
+public final class StandaloneApplicationClusterConfiguration extends EntrypointClusterConfiguration {
 
     @Nonnull private final SavepointRestoreSettings savepointRestoreSettings;
 
@@ -40,6 +46,15 @@ final class StandaloneApplicationClusterConfiguration extends EntrypointClusterC
 
     @Nullable private final String[] jars;
 
+    // 1. configDir: flink-conf.yaml 文件所在的目录
+    // 2. dynamicProperties: 动态配置
+    // 3. args: 命令行参数
+    // 4. hostname: hostname
+    // 5. restPort: rest api 端口
+    // 6. savepointRestoreSettings: savepoint 恢复配置
+    // 7. jobId: job id
+    // 8. jobClassName: job 类名
+    // 9. jars: jar 包
     StandaloneApplicationClusterConfiguration(
             @Nonnull String configDir,
             @Nonnull Properties dynamicProperties,
