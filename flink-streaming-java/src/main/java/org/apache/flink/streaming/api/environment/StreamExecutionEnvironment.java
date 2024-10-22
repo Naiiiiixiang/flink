@@ -148,6 +148,10 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * @see org.apache.flink.streaming.api.environment.LocalStreamEnvironment
  * @see org.apache.flink.streaming.api.environment.RemoteStreamEnvironment
  */
+// StreamExecutionEnvironment 是流式程序执行的上下文
+// LocalStreamEnvironment 会导致在当前 JVM 中执行，RemoteStreamEnvironment 会导致在远程设置中执行。
+// 环境提供了控制作业执行的方法（例如设置并行性或容错/检查点参数）以及与外部世界（数据访问）进行交互。
+// 实现了 AutoCloseable 接口，可以使用 try-with-resources 语句来关闭资源。
 @Public
 public class StreamExecutionEnvironment implements AutoCloseable {
 
@@ -332,6 +336,11 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param parallelism The parallelism
      */
+    // 设置操作执行的并行度
+    // 在这里设置并行度为 x 会导致所有运算符（例如 map、batchReduce）以 x 个并行实例运行。
+    // 此方法覆盖此环境的默认并行度。
+    // LocalStreamEnvironment 默认使用与硬件上下文（CPU 核心/线程）相等的值。
+    // 通过 JAR 文件的命令行客户端执行程序时，默认的并行度是为该设置配置的。
     public StreamExecutionEnvironment setParallelism(int parallelism) {
         config.setParallelism(parallelism);
         return this;

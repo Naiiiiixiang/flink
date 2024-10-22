@@ -92,6 +92,7 @@ public class JobMasterITCase extends TestLogger {
         }
     }
 
+    // 初始化失败的 Source
     private static class FailOnInitializationSource implements Source<String, MockSplit, Void> {
         @Override
         public Boundedness getBoundedness() {

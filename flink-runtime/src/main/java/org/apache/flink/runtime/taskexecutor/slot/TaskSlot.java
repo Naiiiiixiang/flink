@@ -61,6 +61,20 @@ import java.util.stream.Collectors;
  *
  * @param <T> type of the {@link TaskSlotPayload} stored in this slot
  */
+// TaskSlot 是 TaskSlotPayload 的容器，TaskSlot 有多个 TaskSlotPayload
+// TaskSlot 有多个状态，分别是 Free、Releasing、Allocated、Active
+//      Free：空闲状态，没有分配给任何 job
+//      Releasing：即将释放的状态，当 slot 为空时，释放 slot
+//      Allocated：已经分配给 job
+//      Active：被 job manager 使用
+// TaskSlot 只有在 Free 状态下才能被分配，分配后可以变为 Active
+// Active 状态下可以添加任务，添加任务时，任务的 job id 和 allocation id 必须和 slot 的 job id 和 allocation id 一致
+// Active 状态下可以变为 Inactive，变为 Inactive 后，状态变为 Allocated
+// Allocated 或 Active 状态下只有在 slot 为空时才能释放，释放时，状态变为 Releasing，释放后，状态变为 Free
+// 如果 slot 不为空，释放时，任务会被失败，状态变为 Releasing，释放后，状态变为 Free
+// TaskSlot 有一个 MemoryManager，用于管理 slot 的内存
+// TaskSlot 有一个 closingFuture，用于异步关闭 slot
+// TaskSlot 有一个 asyncExecutor，用于异步执行任务
 public class TaskSlot<T extends TaskSlotPayload> implements AutoCloseableAsync {
     private static final Logger LOG = LoggerFactory.getLogger(TaskSlot.class);
 
@@ -90,6 +104,12 @@ public class TaskSlot<T extends TaskSlotPayload> implements AutoCloseableAsync {
     /** {@link Executor} for background actions, e.g. verify all managed memory released. */
     private final Executor asyncExecutor;
 
+    // index: slot 的索引
+    // resourceProfile: slot 的资源配置
+    // memoryPageSize: 内存页大小
+    // jobId: slot 分配给的 job id
+    // allocationId: slot 的分配 id
+    // asyncExecutor: 异步执行器
     public TaskSlot(
             final int index,
             final ResourceProfile resourceProfile,
